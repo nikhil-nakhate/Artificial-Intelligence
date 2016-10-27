@@ -203,19 +203,44 @@ public class TicTacToe {
 		}
 		int minValue = Collections.min(valueList);
 		int minIndex = valueList.indexOf(minValue);
-		System.out.println("SOLUTION" + root.getChildren().get(minIndex).getStateArray());
+		List<Integer> solutionArray = new ArrayList<>();
+		solutionArray = root.getChildren().get(minIndex).getStateArray();
+		//System.out.println("SOLUTION" + root.getChildren().get(minIndex).getStateArray());
+		printOutput(solutionArray);
+		
 
 		
 	}
 		
+	
+	public static void printOutput(List<Integer> stateList) {
+		for(int i = 0; i< stateList.size(); i = i+4) {
+			for (int j =i; j<i+4; j++){
+				if(stateList.get(j) == 0) {
+					System.out.print("O ");
+				}
+				if(stateList.get(j) == 1) {
+					System.out.print("X ");
+				}
+				if(stateList.get(j) == 2) {
+					System.out.print("_ ");
+				}
+				if(stateList.get(j) == 3) {
+					System.out.print("# ");
+				}
+				
+			}
+			System.out.print('\n');
+		}
+	}
 	
 	public static int maxValue(Node node) {
 		if(node.getType().equalsIgnoreCase("leaf")){
 /*			if (node.getAlphaValue() < node.getValue()) {
 				node.setAlphaValue(node.getValue());
 			}*/
-
-			System.out.println(node.getStateArray());
+			printOutput(node.getStateArray());
+			//System.out.println(node.getStateArray());
 			System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
 			return node.getValue();
 		} else {
@@ -232,7 +257,12 @@ public class TicTacToe {
 						//currListChildArray.remove(succIndex);
 						node.removeChild(succIndex);
 					}
-					System.out.println(node.getStateArray());
+					//System.out.println(node.getStateArray());
+					printOutput(node.getStateArray());
+					
+					
+					
+					
 					System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
 					//node.setValue(node.getBetaValue());
 					return node.getBetaValue();
@@ -240,7 +270,8 @@ public class TicTacToe {
 			}
 		}
 
-		System.out.println(node.getStateArray());
+		//System.out.println(node.getStateArray());
+		printOutput(node.getStateArray());
 		System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
 		//node.setValue(node.getAlphaValue());
 		return node.getAlphaValue();
@@ -255,8 +286,8 @@ public class TicTacToe {
 				node.setBetaValue(node.getValue());
 			}*/
 			//System.out.println(node.getBetaValue());
-
-			System.out.println(node.getStateArray());
+			printOutput(node.getStateArray());
+			//System.out.println(node.getStateArray());
 			System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
 			return node.getValue();
 		} else {
@@ -273,14 +304,16 @@ public class TicTacToe {
 						node.removeChild(succIndex);
 					}
 	
-					System.out.println(node.getStateArray());
+					//System.out.println(node.getStateArray());
+					printOutput(node.getStateArray());
 					System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
 					//node.setValue(node.getAlphaValue());
 					return node.getAlphaValue();
 					
 				}
 			}
-			System.out.println(node.getStateArray());
+			//System.out.println(node.getStateArray());
+			printOutput(node.getStateArray());
 			System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
 			//node.setValue(node.getBetaValue());
 			return node.getBetaValue();
