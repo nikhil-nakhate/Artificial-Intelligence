@@ -151,7 +151,6 @@ class Node {
 		this.whoseTurn = whoseTurn;
 	}
 
-
 }
 
 
@@ -177,7 +176,7 @@ public class TicTacToe {
 				currStateList.add(3);
 			}
 		}
-		System.out.println("INITIAL STATE" + currStateList);
+		//System.out.println("INITIAL STATE" + currStateList);
 		root.setParent(null);
 		for (int i =0; i< currStateList.size(); i++){
 			root.addStateElement(currStateList.get(i));
@@ -195,21 +194,17 @@ public class TicTacToe {
 		}
 		root.setType("not_leaf");
 		
-		maxValue(root);
+		minValue(root, -2, 2);
 		ArrayList<Integer> valueList = new ArrayList<>();
 		for (int i = 0; i< root.getChildren().size(); i++) {
-			valueList.add(root.getChildren().get(i).getValue());
-			
+			valueList.add(root.getChildren().get(i).getValue());		
 		}
 		int minValue = Collections.min(valueList);
 		int minIndex = valueList.indexOf(minValue);
 		List<Integer> solutionArray = new ArrayList<>();
 		solutionArray = root.getChildren().get(minIndex).getStateArray();
-		//System.out.println("SOLUTION" + root.getChildren().get(minIndex).getStateArray());
-		printOutput(solutionArray);
-		
-
-		
+		System.out.println("SOLUTION");
+		printOutput(solutionArray);	
 	}
 		
 	
@@ -234,127 +229,110 @@ public class TicTacToe {
 		}
 	}
 	
-	public static int maxValue(Node node) {
+	public static int maxValue(Node node, int alpha, int beta) {
+		
 		if(node.getType().equalsIgnoreCase("leaf")){
-/*			if (node.getAlphaValue() < node.getValue()) {
-				node.setAlphaValue(node.getValue());
-			}*/
 			printOutput(node.getStateArray());
 			//System.out.println(node.getStateArray());
-			System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
+			System.out.println("Alpha: " + alpha + " Beta: " + beta);
+/*			if(node.getParent() != null){
+				node.getParent().setBetaValue(Math.min(node.getValue(), node.getParent().getBetaValue()));
+			}*/
 			return node.getValue();
-		} else {
-			//node.setAlphaValue(-2);
+		}else {
+
 			getChildArray(node);
-			
+
 			for (int i = 0; i < node.getChildren().size(); i++) {
-				//node.setValue(node.getAlphaValue());
-				node.setAlphaValue(Math.max(node.getAlphaValue(), minValue(node.getChildren().get(i))));
 				
-				if (node.getAlphaValue() >= node.getBetaValue()) {
-					//List<Node> currChildArray = node.getChildren();
-					for (int succIndex = i+1; succIndex < node.getChildren().size(); succIndex++) {
-						//currListChildArray.remove(succIndex);
-						node.removeChild(succIndex);
-					}
-					//System.out.println(node.getStateArray());
+
+				alpha = (Math.max(alpha, minValue(node.getChildren().get(i), alpha, beta)));
+				node.setValue(alpha);
+/*				if(node.getParent() != null) {
+					node.getParent().setBetaValue(Math.min(node.getValue(), node.getParent().getBetaValue()));
+				}*/
+
+				if (alpha >= beta) {
 					printOutput(node.getStateArray());
-					
-					
-					
-					
-					System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
-					//node.setValue(node.getBetaValue());
-					return node.getBetaValue();
+				
+					System.out.println("Alpha: " + alpha + "  Beta: " + beta);
+					return beta;
 				}
 			}
 		}
 
 		//System.out.println(node.getStateArray());
 		printOutput(node.getStateArray());
-		System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
-		//node.setValue(node.getAlphaValue());
-		return node.getAlphaValue();
+		System.out.println("Alpha: " + alpha + "  Beta: " + beta);
+		node.setValue(alpha);
+		return alpha;
 		
 	}
 	
-	public static int minValue(Node node) {
+	public static int minValue(Node node, int alpha, int beta) {
 
 		if(node.getType().equalsIgnoreCase("leaf")) {
-			//System.out.println("LEAF");
-/*			if (node.getBetaValue() > node.getValue()) {
-				node.setBetaValue(node.getValue());
-			}*/
-			//System.out.println(node.getBetaValue());
 			printOutput(node.getStateArray());
 			//System.out.println(node.getStateArray());
-			System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
+			System.out.println("Alpha: " + alpha + "  Beta: " + beta);
+/*			if(node.getParent() != null) {
+				node.getParent().setAlphaValue(Math.max(node.getValue(), node.getParent().getAlphaValue()));
+			}*/
+			//System.out.println(node.getParent().getAlphaValue());
+			
 			return node.getValue();
-		} else {
-			//System.out.println("Are you coming in min");
-			//node.setBetaValue(2);
+		} else  {
+
 			getChildArray(node);
+
 			for (int i1 = 0; i1< node.getChildren().size(); i1++) {
-				node.setBetaValue(Math.min(node.getBetaValue(), maxValue(node.getChildren().get(i1))));
-				
-				if (node.getAlphaValue() >= node.getBetaValue()) {
-					//List<Node> currChildArray = node.getChildren();
-					for (int succIndex = i1+1; succIndex < node.getChildren().size(); succIndex++) {
-						//currListChildArray.remove(succIndex);
-						node.removeChild(succIndex);
-					}
-	
-					//System.out.println(node.getStateArray());
+
+				beta = Math.min(beta, maxValue(node.getChildren().get(i1), alpha, beta));
+				node.setValue(beta);
+/*				if(node.getParent() != null) {
+					node.getParent().setAlphaValue(Math.max(node.getValue(), node.getParent().getAlphaValue()));
+				}*/
+				if (alpha >= beta) {
 					printOutput(node.getStateArray());
-					System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
-					//node.setValue(node.getAlphaValue());
-					return node.getAlphaValue();
+					System.out.println("Alpha: " + alpha + "  Beta: " + beta);
+					return alpha;
 					
 				}
 			}
 			//System.out.println(node.getStateArray());
 			printOutput(node.getStateArray());
-			System.out.println("Alpha: " + node.getAlphaValue() + "  Beta: " + node.getBetaValue());
-			//node.setValue(node.getBetaValue());
-			return node.getBetaValue();
+			System.out.println("Alpha: " + alpha + "  Beta: " + beta);
+			node.setValue(beta);
+			return beta;
 		}	
 	}
 	
 		
 	public static boolean checkIsLeaf(Node currNode) {
 		boolean isLeaf = false;
-
-			for (int i = 0; i < 12; i++) {
-				//System.out.println(currNode.getXIndexArray() + "HELLLLL");
-				
-				//System.out.println(winningLeafStates.get(i));
-				if (!isLeaf) {
-					//System.out.println(currNode.getXIndexArray() + "HELLLasdfasdfadsfLL");
-					if(currNode.getWhoseTurn().equalsIgnoreCase("X")) {
-						isLeaf = currNode.getXIndexArray().containsAll(winningLeafStates.get(i));
-						currNode.setValue(-1);
-						//currNode.setBetaValue(-1);
-						break;
-					} else {
-						isLeaf = currNode.getOIndexArray().containsAll(winningLeafStates.get(i));
-						currNode.setValue(1);
-						//currNode.setAlphaValue(1);
-						break;
-					}
-				}
-
-		}
-			if (!currNode.getStateArray().contains(2) && !isLeaf) {
-				//System.out.println("Leaf");
-				currNode.setValue(0);
-/*				if(currNode.getWhoseTurn().equalsIgnoreCase("X")) {
-					currNode.setBetaValue(0);
-				} else {
-					currNode.setAlphaValue(0);
-				}*/
-				isLeaf = true;
-			}
 		
+		if(currNode.getWhoseTurn().equalsIgnoreCase("X")) {
+			for (int i = 0;i<12; i++) {
+				isLeaf = currNode.getXIndexArray().containsAll(winningLeafStates.get(i));
+				currNode.setValue(-1);
+				if(isLeaf) {
+					break;
+				}
+			}
+		} else {
+			for (int i = 0;i<12; i++) {
+				isLeaf = currNode.getOIndexArray().containsAll(winningLeafStates.get(i));
+				currNode.setValue(1);
+				if(isLeaf) {
+					break;
+				}
+			}
+		}
+		if (!currNode.getStateArray().contains(2) && !isLeaf) {
+			//System.out.println("Leaf");
+			currNode.setValue(0);
+			isLeaf = true;
+		}		
 		return isLeaf;
 	}
 	
@@ -381,8 +359,8 @@ public class TicTacToe {
 				
 				//childNode.updateStateArray(freeIndexArray.get(l), 1);
 				childNode.setWhoseTurn("O");
-				childNode.setAlphaValue(currNode.getAlphaValue());
-				childNode.setBetaValue(currNode.getBetaValue());
+				//childNode.setAlphaValue(currNode.getAlphaValue());
+				//childNode.setBetaValue(currNode.getBetaValue());
 				//currXIndexArray.add(freeIndexArray.get(l));
 				
 				for (int i = 0; i< currNode.getXIndexArray().size(); i++){
@@ -397,11 +375,7 @@ public class TicTacToe {
 				childNode.updateStateArray(freeIndexArray.get(l), 0);
 				
 				childNode.updateOIndexArray(freeIndexArray.get(l));
-
-
-				//childNode.setParent(currNode);                            //doing in addChild
-				
-				
+		
 				currNode.addChild(childNode);
 				
 				boolean isLeaf = checkIsLeaf(childNode);
@@ -420,24 +394,13 @@ public class TicTacToe {
 				//System.out.println("HOW MANY" + freeIndexArray.get(l1));
 				Node childNode = new Node();
 				List<Integer> currStateList = new ArrayList<>();
-				//List<Integer> currOIndexArray = new ArrayList<>();
-				//List<Integer> currXIndexArray = new ArrayList<>();
+
 				currStateList = currNode.getStateArray();
-				//currStateList.set(freeIndexArray.get(l1), 0);
-				//childNode.setStateArray((ArrayList<Integer>)currStateList);
-				
-				
-				//childNode.updateStateArray(freeIndexArray.get(l1), 0);
-				
-				//childNode.setStateArray((ArrayList<Integer>)currStateList);
+
 				childNode.setWhoseTurn("X");
-				childNode.setAlphaValue(currNode.getAlphaValue());
-				childNode.setBetaValue(currNode.getBetaValue());
-				//currOIndexArray = currNode.getOIndexArray();
-				//currXIndexArray = currNode.getXIndexArray();
-					
-				//currOIndexArray.add(freeIndexArray.get(l1));
-				//childNode.setOIndexArray((ArrayList<Integer>)currOIndexArray);
+				//childNode.setAlphaValue(currNode.getAlphaValue());
+				//childNode.setBetaValue(currNode.getBetaValue());
+
 				for (int i =0; i<currStateList.size(); i++){
 					childNode.addStateElement(currStateList.get(i));
 				}
@@ -455,9 +418,7 @@ public class TicTacToe {
 				//System.out.println("ChildNODEState" + childNode.getStateArray());
 				
 				childNode.updateXIndexArray(freeIndexArray.get(l1));
-				
-				//childNode.setXIndexArray((ArrayList<Integer>)currXIndexArray);
-				//childNode.setParent(currNode);                            //doing in addChild
+                          
 				currNode.addChild(childNode);
 				
 				boolean isLeaf = checkIsLeaf(childNode);
